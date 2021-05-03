@@ -1,6 +1,14 @@
-document.getElementById('loan-form').addEventListener('submit', quantifyLoan);
+document.getElementById('loan-form').addEventListener('submit', function(e) {
+  // Hide Results portion
+  document.querySelector('#results').style.display = 'none';
+  // Show loader animation
+  document.querySelector('.loading').style.display = 'block';
+  
+  setTimeout(quantifyLoan,'2000');
+  e.preventDefault();
+});
 
-function quantifyLoan(e) {
+function quantifyLoan() {
   
   const amount = document.getElementById('amount');
   const interest = document.getElementById('interest');
@@ -17,21 +25,30 @@ function quantifyLoan(e) {
   console.log(x);
   const monthly = (principal * x * calculatedInterest) / (x - 1);
   console.log(monthly);
-
-   if (isFinite(monthly)) {
+  
+  if (isFinite(monthly)) {
     monthlyPayment.value = monthly.toFixed(2);
     totalPayment.value = (monthly * calculatedPayments).toFixed(2);
     totalInterest.value = ((monthly * calculatedPayments) - principal).toFixed(2);
+
+    // Hide Loader animation
+    document.querySelector('.loading').style.display = 'none';
+    // Show results portion
+    document.getElementById('results').style.display = 'block';
   }
   else {
     // console.log('Please check your numbers');
     showError('Please check your numbers');
-   }
-  e.preventDefault();
+  }
 }
 
 // Function showError
 function showError(error) {
+  clearError();
+  // Hide Loader animation
+  document.querySelector('.loading').style.display = 'none';
+  // Hide results portion
+  document.getElementById('results').style.display = 'none';
   // Create a div element
   const errDiv = document.createElement('div');
   // Add class name to errDiv element for styling
@@ -40,17 +57,21 @@ function showError(error) {
   const cardElement = document.querySelector('.card');
   // Get heading element
   const headingElement = document.querySelector('.heading');
-
+  
   //Create a text node under errDiv
   errDiv.appendChild(document.createTextNode(error));
-
+  
   cardElement.insertBefore(errDiv,headingElement);
-
+  
   // Clear error after 3 sec
   setTimeout(clearError, 3000);
 }
 
 // Function clear error
 function clearError() {
-  document.querySelector('.alert').remove();
+  const errText = document.querySelector('.alert');
+  console.log(errText);
+  if (errText !== null) {
+    errText.remove();
+  }
 }
